@@ -17,6 +17,7 @@ require (
 	github.com/redis/go-redis/v9 v9.17.3
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.72
 	github.com/tencentyun/qcloud-cos-sts-sdk v0.0.0-20251226100129-1701383cae15
+	github.com/volcengine/ve-tos-golang-sdk/v2 v2.9.1
 	github.com/volcengine/volc-sdk-golang v1.0.237
 )
 
@@ -63,6 +64,7 @@ require (
 	go.opentelemetry.io/otel/sdk v1.38.0 // indirect
 	go.opentelemetry.io/otel/trace v1.38.0 // indirect
 	golang.org/x/net v0.40.0 // indirect
+	golang.org/x/sync v0.14.0 // indirect
 	golang.org/x/sys v0.35.0 // indirect
 	golang.org/x/text v0.25.0 // indirect
 	golang.org/x/time v0.4.0 // indirect

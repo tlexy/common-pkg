@@ -32,7 +32,7 @@ const (
 	contextKeyCdnName                  = contextKey("cdnName")
 	contextKeyPublicEndPoint           = contextKey("publicEndPoint")
 	contextKeyOssArn                   = contextKey("ossArn")
-	contextKeyTosTrn                  = contextKey("tosTrn")
+	contextKeyTosTrn                   = contextKey("tosTrn")
 	ContextKeyCosUrl                   = contextKey("cosUrl")
 	contextTypeObs                     = "obs"
 	contextTypeCos                     = "cos"
@@ -134,8 +134,6 @@ func BuildTosContext(accessKey, secretKey, endPoint, bucketName, tosCdn, tosTrn 
 	return ctx
 }
 
-
-
 func GetObsContext(ctx context.Context) (string, string, string, string, string, error) {
 	accessKey, ok := ctx.Value(contextKeyAccessKey).(string)
 	if !ok {
@@ -228,7 +226,7 @@ func GetCosContext(ctx context.Context) (string, string, string, string, error) 
 	return accessKey, secretKey, cosUrl, cdnName, nil
 }
 
-func GetTosContext(ctx context.Context) (string, string, string, string, string,string, error) {
+func GetTosContext(ctx context.Context) (string, string, string, string, string, string, error) {
 	accessKey, ok := ctx.Value(contextKeyAccessKey).(string)
 	if !ok {
 		return "", "", "", "", "", "", fmt.Errorf("missing access key in context")
@@ -239,7 +237,7 @@ func GetTosContext(ctx context.Context) (string, string, string, string, string,
 	}
 	endPoint, ok := ctx.Value(contextKeyEndPoint).(string)
 	if !ok {
-		return "", "", "", "", "", "",fmt.Errorf("missing end point in context")
+		return "", "", "", "", "", "", fmt.Errorf("missing end point in context")
 	}
 	bucketName, ok := ctx.Value(contextKeyBucketName).(string)
 	if !ok {
@@ -253,7 +251,6 @@ func GetTosContext(ctx context.Context) (string, string, string, string, string,
 	cdnName, _ := ctx.Value(contextKeyCdnName).(string)
 	return accessKey, secretKey, endPoint, bucketName, cdnName, tosTrn, nil
 }
-
 
 func extractObjectNameFromHttpUrl(remoteUrl, cdn string) (string, error) {
 	pos := strings.Index(remoteUrl, cdn)
@@ -519,6 +516,8 @@ func DownloadObjectWithContext(ctx context.Context, objectName, localFilename st
 		return downloadOssResource(ctx, objectName, localFilename)
 	} else if typeName == contextTypeCos {
 		return downloadCosResource(ctx, objectName, localFilename)
+	} else if typeName == contextTypeTos {
+		return downloadTosResource(ctx, objectName, localFilename)
 	} else {
 		return fmt.Errorf("unsupported context type name")
 	}
@@ -535,6 +534,8 @@ func DownloadObjectBytesWithContext(ctx context.Context, objectName string) (io.
 		return downloadOssObjectBytes(ctx, objectName)
 	} else if typeName == contextTypeCos {
 		return downloadCosObjectBytes(ctx, objectName)
+	} else if typeName == contextTypeTos {
+		return downloadTosObjectBytes(ctx, objectName)
 	} else {
 		return nil, fmt.Errorf("unsupported context type name")
 	}
@@ -551,6 +552,8 @@ func UploadObjectWithContext(ctx context.Context, objectName, localFilename stri
 		return uploadOssResource(ctx, localFilename, objectName, aclType, options...)
 	} else if typeName == contextTypeCos {
 		return uploadCosResource(ctx, localFilename, objectName, aclType)
+	} else if typeName == contextTypeTos {
+		return uploadTosResource(ctx, localFilename, objectName, aclType)
 	} else {
 		return "", fmt.Errorf("unsupported context type name")
 	}
@@ -579,6 +582,8 @@ func UploadBytesWithContext(ctx context.Context, r io.ReadCloser, objectName str
 		return uploadOssResourceBytes(ctx, r, objectName, aclType, options...)
 	} else if typeName == contextTypeCos {
 		return uploadCosResourceBytes(ctx, r, objectName, aclType)
+	} else if typeName == contextTypeTos {
+		return uploadTosResourceBytes(ctx, r, objectName, aclType)
 	} else {
 		return "", "", fmt.Errorf("unsupported context type name")
 	}
@@ -673,6 +678,25 @@ func downloadCosResource(ctx context.Context, objectName, localFilename string) 
 	return cos_util.Download(ctx, accessKey, secretKey, cosUrl, objectName, localFilename)
 }
 
+func downloadTosResource(ctx context.Context, objectName, localFilename string) error {
+	targetDir := filepath.Dir(localFilename)
+	err := common.EnsureOutputDirectory(targetDir)
+	if err != nil {
+		return err
+	}
+	accessKey, secretKey, endPoint, bucketName, cdn, _, err := GetTosContext(ctx)
+	if err != nil {
+		return fmt.Errorf("missing tos context")
+	}
+	if strings.Contains(objectName, "https://") {
+		objectName, err = extractObjectNameFromHttpUrl(objectName, cdn)
+		if err != nil {
+			return err
+		}
+	}
+	return tos_util.Download(ctx, accessKey, secretKey, endPoint, bucketName, objectName, localFilename)
+}
+
 func downloadObsObjectBytes(ctx context.Context, objectName string) (io.ReadCloser, error) {
 	accessKey, secretKey, endPoint, bucketName, cdn, err := GetObsContext(ctx)
 	if err != nil {
@@ -713,6 +737,20 @@ func downloadCosObjectBytes(ctx context.Context, objectName string) (io.ReadClos
 		}
 	}
 	return cos_util.DownloadBytes(ctx, accessKey, secretKey, cosUrl, objectName)
+}
+
+func downloadTosObjectBytes(ctx context.Context, objectName string) (io.ReadCloser, error) {
+	accessKey, secretKey, endPoint, bucketName, cdn, _, err := GetTosContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	if strings.Contains(objectName, "https://") {
+		objectName, err = extractObjectNameFromHttpUrl(objectName, cdn)
+		if err != nil {
+			return nil, err
+		}
+	}
+	return tos_util.DownloadBytes(ctx, accessKey, secretKey, endPoint, bucketName, objectName)
 }
 
 func uploadObsResource(ctx context.Context, localFilename, objectName string, aclType acl.StorageAclType) (string, error) {
@@ -801,21 +839,27 @@ func uploadCosResource(ctx context.Context, localFilename, objectName string, ac
 	if err != nil {
 		return "", fmt.Errorf("missing cos context")
 	}
-	// 获取aux目录
-	// auxDir := filepath.Dir(localFilename)
-	// auxDir = auxDir + "/upload_big_aux_" + uuid.New().String()
 	err = cos_util.Upload(ctx, accessKey, secretKey, cosUrl, objectName, localFilename, aclType)
 	if err != nil {
 		return "", err
 	}
-	// directUrl := fmt.Sprintf("https://%s/%s", cosUrl, objectName)
-	// if cdn == "" {
-	// 	return "", directUrl, nil
-	// } else {
-	// 	return fmt.Sprintf("%s/%s", cdn, objectName), directUrl, nil
-	// }
 	if cdn == "" {
 		cdn = cosUrl
+	}
+	return fmt.Sprintf("%s/%s", cdn, objectName), nil
+}
+
+func uploadTosResource(ctx context.Context, localFilename, objectName string, aclType acl.StorageAclType) (string, error) {
+	accessKey, secretKey, endPoint, bucketName, cdn, _, err := GetTosContext(ctx)
+	if err != nil {
+		return "", fmt.Errorf("missing tos context")
+	}
+	err = tos_util.Upload(ctx, accessKey, secretKey, endPoint, bucketName, localFilename, objectName, aclType)
+	if err != nil {
+		return "", err
+	}
+	if cdn == "" {
+		cdn = fmt.Sprintf("https://%s.%s", bucketName, strings.Replace(endPoint, "https://", "", -1))
 	}
 	return fmt.Sprintf("%s/%s", cdn, objectName), nil
 }
@@ -878,14 +922,30 @@ func uploadCosResourceBytes(ctx context.Context, r io.ReadCloser, objectName str
 	if err != nil {
 		return "", "", fmt.Errorf("missing cos context")
 	}
-	// 获取aux目录
-	// auxDir := "/upload_big_aux_" + uuid.New().String()
 	defer r.Close()
 	err = cos_util.UploadBytesByReader(ctx, accessKey, secretKey, cosUrl, objectName, r, aclType)
 	if err != nil {
 		return "", "", err
 	}
 	directUrl := fmt.Sprintf("%s/%s", cosUrl, objectName)
+	if cdn == "" {
+		return "", directUrl, nil
+	} else {
+		return fmt.Sprintf("%s/%s", cdn, objectName), directUrl, nil
+	}
+}
+
+func uploadTosResourceBytes(ctx context.Context, r io.ReadCloser, objectName string, aclType acl.StorageAclType) (string, string, error) {
+	accessKey, secretKey, endPoint, bucketName, cdn, _, err := GetTosContext(ctx)
+	if err != nil {
+		return "", "", fmt.Errorf("missing tos context")
+	}
+	defer r.Close()
+	err = tos_util.UploadBytesByReader(ctx, accessKey, secretKey, endPoint, bucketName, r, objectName, aclType)
+	if err != nil {
+		return "", "", err
+	}
+	directUrl := fmt.Sprintf("https://%s.%s/%s", bucketName, strings.Replace(endPoint, "https://", "", -1), objectName)
 	if cdn == "" {
 		return "", directUrl, nil
 	} else {
