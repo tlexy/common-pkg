@@ -3,6 +3,7 @@ package vod_volce
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"path/filepath"
 
 	"github.com/volcengine/volc-sdk-golang/base"
@@ -10,6 +11,7 @@ import (
 	"github.com/volcengine/volc-sdk-golang/service/vod/models/business"
 	"github.com/volcengine/volc-sdk-golang/service/vod/models/request"
 	"github.com/volcengine/volc-sdk-golang/service/vod/upload/functions"
+	"github.com/volcengine/volc-sdk-golang/service/vod/upload/model"
 )
 
 type VodVolce struct {
@@ -77,4 +79,75 @@ func (v *VodVolce) UploadMediaWithName(localFilename, objectName string) (string
 	fmt.Println(resp.GetResult().GetData().GetSourceInfo().GetFileName())
 
 	return resp.GetResult().GetData().GetVid(), nil
+}
+
+func (v *VodVolce) UploadMediaByReader(reader io.Reader) (string, error) {
+	return v.UploadMediaByReaderWithName(reader, "")
+}
+
+func (v *VodVolce) UploadMediaByReaderWithName(reader io.Reader, objectName string) (string, error) {
+	instance := vod.NewInstance()
+	instance.SetCredential(base.Credentials{
+		AccessKeyID:     v.accessKey,
+		SecretAccessKey: v.secretKey,
+	})
+
+	spaceName := v.spaceName
+
+	optionFunc := functions.AddOptionInfoFunc(business.VodUploadFunctionInput{
+		Title:            objectName,     // 视频的标题
+		Tags:             "upload video", // 视频的标签
+		Description:      "upload video", // 视频的描述信息
+		ClassificationId: 0,              // 分类 Id，上传时可以指定分类，非必须字段
+		IsHlsIndexOnly:   false,          //该字段传true表示视频仅关联hls文件，删除时不会删除ts文件
+	})
+
+	vodFunctions := []business.VodUploadFunction{optionFunc}
+	fbts, _ := json.Marshal(vodFunctions)
+
+	vodUploadMediaRequset := &model.VodStreamUploadRequest{
+		SpaceName:       spaceName,    // 空间名称
+		Content:         reader,       // 流式内容
+		CallbackArgs:    "",           // 透传信息，业务希望透传的字段可以写入，返回和回调中会返回此字段，非必须字段
+		Functions:       string(fbts), // 函数功能，具体可以参考火山引擎点播文档 开发者API-媒资上传-确认上传的 Functions 部分，可选功能字段
+		FileName:        objectName,   // 设置文件名，无格式长度限制，用户可自定义,目前文件名不支持空格、+ 字符,如果要使用此字段，请联系技术支持配置白名单，非必须字段
+		FileExtension:   "",           // 设置文件后缀，以 . 开头，不超过8位
+		VodUploadSource: "upload",     // 设置上传来源，值为枚举值
+	}
+
+	resp, _, err := instance.UploadMediaStreamWithCallback(vodUploadMediaRequset)
+	if err != nil {
+		fmt.Printf("UploadMediaWithCallback error %v", err)
+		return "", err
+	}
+
+	fmt.Println()
+	fmt.Println(resp.GetResponseMetadata().GetRequestId())
+	fmt.Println(resp.GetResult().GetData().GetVid())
+	fmt.Println(resp.GetResult().GetData().GetSourceInfo().GetFileName())
+
+	return resp.GetResult().GetData().GetVid(), nil
+}
+
+func (v *VodVolce) GetMediaDownloadUrl(vid string) (string, error) {
+	instance := vod.NewInstance()
+	instance.SetCredential(base.Credentials{
+		AccessKeyID:     v.accessKey,
+		SecretAccessKey: v.secretKey,
+	})
+
+	query := &request.VodGetPlayInfoRequest{
+		Vid: vid,
+	}
+
+	resp, status, err := instance.GetPlayInfo(query)
+	if err != nil {
+		fmt.Printf("GetPlayInfo error %v", err)
+		return "", err
+	}
+
+	fmt.Println(status)
+	fmt.Println(err)
+	fmt.Println(resp.String())
+	return resp.String(), nil
 }
