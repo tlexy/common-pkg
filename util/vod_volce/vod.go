@@ -151,3 +151,30 @@ func (v *VodVolce) GetMediaDownloadUrl(vid string) (string, error) {
 	fmt.Println(resp.String())
 	return resp.String(), nil
 }
+
+func (v *VodVolce) GetMediaInnerDownloadUrl(spaceName, fileName string, expireInSecond int64) (string, error) {
+	instance := vod.NewInstance()
+	instance.SetCredential(base.Credentials{
+		AccessKeyID:     v.accessKey,
+		SecretAccessKey: v.secretKey,
+	})
+
+	query := &request.VodGetFileInfosRequest{
+		SpaceName:              spaceName,
+		EncodedFileNames:       fileName,
+		NeedDownloadUrl:        true,
+		DownloadUrlExpire:      expireInSecond,
+		DownloadUrlNetworkType: "vpc-inner",
+	}
+
+	resp, status, err := instance.GetFileInfos(query)
+	if err != nil {
+		fmt.Printf("GetFileInfos error %v", err)
+		return "", err
+	}
+
+	fmt.Println(status)
+	fmt.Println(err)
+	fmt.Println(resp.String())
+	return resp.String(), nil
+}

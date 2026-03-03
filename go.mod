@@ -19,6 +19,7 @@ require (
 	github.com/tencentyun/qcloud-cos-sts-sdk v0.0.0-20251226100129-1701383cae15
 	github.com/volcengine/ve-tos-golang-sdk/v2 v2.9.1
 	github.com/volcengine/volc-sdk-golang v1.0.237
+	github.com/volcengine/volcengine-go-sdk v1.2.16
 )
 
 require (
@@ -71,7 +72,8 @@ require (
 	golang.org/x/text v0.25.0 // indirect
 	golang.org/x/time v0.4.0 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
-	google.golang.org/protobuf v1.28.0 // indirect
+	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
