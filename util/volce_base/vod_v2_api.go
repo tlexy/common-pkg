@@ -98,3 +98,58 @@ type StartExecutionInput struct {
 	Operation *ConvertOperationForStartExecutionInput `json:"Operation,omitempty"`
 	SpaceName string                                  `json:"SpaceName,omitempty"`
 }
+
+type ResponseMetadata struct {
+	RequestId string `json:"RequestId,omitempty"`
+	Action    string `json:"Action,omitempty"`
+	Version   string `json:"Version,omitempty"`
+	Service   string `json:"Service,omitempty"`
+	Region    string `json:"Region,omitempty"`
+}
+
+type StartExecutionOutput struct {
+	ResponseMetadata ResponseMetadata `json:"ResponseMetadata,omitempty"`
+	Result           struct {
+		RunId string `json:"RunId,omitempty"`
+	} `json:"Result,omitempty"`
+}
+
+type ExcutionOcrResult struct {
+	ResponseMetadata ResponseMetadata `json:"ResponseMetadata,omitempty"`
+	Result           struct {
+		Status string                       `json:"Status,omitempty"`
+		RunId  string                       `json:"RunId,omitempty"`
+		Input  *InputForStartExecutionInput `json:"Input,omitempty"`
+		Meta   struct {
+			CreateTime string `json:"CreateTime,omitempty"`
+			EndTime    string `json:"EndTime,omitempty"`
+			SpaceName  string `json:"SpaceName,omitempty"`
+			StartTime  string `json:"StartTime,omitempty"`
+			Trigger    string `json:"Trigger,omitempty"`
+		} `json:"Meta,omitempty"`
+		Operation *ConvertOperationForStartExecutionInput `json:"Operation,omitempty"`
+		Output    struct {
+			Type string `json:"Type,omitempty"`
+			Task struct {
+				Type string `json:"Type,omitempty"`
+				Ocr  struct {
+					Duration float64 `json:"Duration,omitempty"`
+					Texts    []struct {
+						Text         string  `json:"Text,omitempty"`
+						Start        float64 `json:"Start,omitempty"`
+						End          float64 `json:"End,omitempty"`
+						DetailedInfo struct {
+							Label          string `json:"Label,omitempty"`
+							PixelRectangle struct {
+								TopLeftX     float64 `json:"TopLeftX,omitempty"`
+								TopLeftY     float64 `json:"TopLeftY,omitempty"`
+								BottomRightX float64 `json:"BottomRightX,omitempty"`
+								BottomRightY float64 `json:"BottomRightY,omitempty"`
+							} `json:"PixelRectangle,omitempty"`
+						} `json:"DetailedInfo,omitempty"`
+					} `json:"Texts,omitempty"`
+				} `json:"Ocr,omitempty"`
+			} `json:"Task,omitempty"`
+		} `json:"Output,omitempty"`
+	} `json:"Result,omitempty"`
+}

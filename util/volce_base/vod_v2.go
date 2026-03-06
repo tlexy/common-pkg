@@ -15,28 +15,30 @@ import (
 )
 
 type VodV2Session struct {
-	accessKey string
-	secretKey string
-	addr      string
-	action    string
-	version   string
-	method    string
-	path      string
-	service   string
-	region    string
+	accessKey   string
+	secretKey   string
+	addr        string
+	startAction string
+	getAction   string
+	version     string
+	method      string
+	path        string
+	service     string
+	region      string
 }
 
 func NewVodV2Session(accessKey, secretKey string) *VodV2Session {
 	return &VodV2Session{
-		accessKey: accessKey,
-		secretKey: secretKey,
-		addr:      "https://vod.volcengineapi.com",
-		action:    "StartExecution",
-		version:   "2025-01-01",
-		method:    http.MethodPost,
-		path:      "/",
-		service:   "vod",
-		region:    "cn-north-1",
+		accessKey:   accessKey,
+		secretKey:   secretKey,
+		addr:        "https://vod.volcengineapi.com",
+		startAction: "StartExecution",
+		getAction:   "GetExecution",
+		version:     "2025-01-01",
+		method:      http.MethodPost,
+		path:        "/",
+		service:     "vod",
+		region:      "cn-north-1",
 	}
 }
 
@@ -64,12 +66,28 @@ func getSignedKey(secretKey, date, region, service string) []byte {
 	return kSigning
 }
 
-func (v *VodV2Session) ConstructHttpRequest(body []byte) (*http.Request, error) {
+func (v *VodV2Session) StartExecutionRequest(body []byte) (*http.Request, error) {
+	queries := make(url.Values)
+	queries.Set("Action", v.startAction)
+	queries.Set("Version", v.version)
+	return v.doHttpRequest(body, queries)
+}
+
+func (v *VodV2Session) GetExecutionRequest(runId string) (*http.Request, error) {
+	queries := make(url.Values)
+	queries.Set("Action", v.getAction)
+	queries.Set("Version", v.version)
+	queries.Set("RunId", runId)
+	v.method = http.MethodGet
+	return v.doHttpRequest(nil, queries)
+}
+
+func (v *VodV2Session) doHttpRequest(body []byte, queries url.Values) (*http.Request, error) {
 	// https://www.volcengine.com/docs/4/1923688?lang=zh
 	// https://github.com/volcengine/volc-openapi-demos/blob/main/signature/golang/sign.go
-	queries := make(url.Values)
-	queries.Set("Action", v.action)
-	queries.Set("Version", v.version)
+	// queries := make(url.Values)
+	// queries.Set("Action", v.action)
+	// queries.Set("Version", v.version)
 
 	requestAddr := fmt.Sprintf("%s%s?%s", v.addr, v.path, queries.Encode())
 	log.Printf("request addr: %s\n", requestAddr)
@@ -87,7 +105,8 @@ func (v *VodV2Session) ConstructHttpRequest(body []byte) (*http.Request, error) 
 
 	payload := hex.EncodeToString(hashSHA256(body))
 	request.Header.Set("X-Content-Sha256", payload)
-	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	//request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	request.Header.Set("Content-Type", "application/json")
 
 	queryString := strings.Replace(queries.Encode(), "+", "%20", -1)
 	signedHeaders := []string{"host", "x-date", "x-content-sha256", "content-type"}

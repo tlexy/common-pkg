@@ -1,0 +1,717 @@
+{
+    "ResponseMetadata": {
+        "RequestId": "202603070029510B8A48B77A80F72A00AC",
+        "Action": "GetExecution",
+        "Version": "2025-01-01",
+        "Service": "vod",
+        "Region": "cn-north-1"
+    },
+    "Result": {
+        "Input": {
+            "Type": "Vid",
+            "Vid": "v0326cg10067d6htkm2ljhtaoh6k98vg"
+        },
+        "Meta": {
+            "CreateTime": "2026-03-06T15:45:22Z",
+            "EndTime": "2026-03-06T15:45:59Z",
+            "SpaceName": "space-voice-extreme",
+            "StartTime": "2026-03-06T15:45:22Z",
+            "Trigger": "API"
+        },
+        "Operation": {
+            "Task": {
+                "Type": "Ocr",
+                "Ocr": {
+                    "Mode": "Detailed"
+                }
+            },
+            "Type": "Task"
+        },
+        "Output": {
+            "Task": {
+                "Type": "Ocr",
+                "Ocr": {
+                    "Duration": 50.16,
+                    "Texts": [
+                        {
+                            "Text": "江城市人民",
+                            "Start": 0,
+                            "End": 0.28,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 761,
+                                    "TopLeftY": 1445,
+                                    "BottomRightX": 903,
+                                    "BottomRightY": 1491
+                                }
+                            }
+                        },
+                        {
+                            "Text": "市人民",
+                            "Start": 0.88,
+                            "End": 1.52,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 723,
+                                    "TopLeftY": 1439,
+                                    "BottomRightX": 856,
+                                    "BottomRightY": 1493
+                                }
+                            }
+                        },
+                        {
+                            "Text": "沈总",
+                            "Start": 1.56,
+                            "End": 2.36,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 447,
+                                    "TopLeftY": 1239,
+                                    "BottomRightX": 646,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "城市人民",
+                            "Start": 1.84,
+                            "End": 2.28,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 743,
+                                    "TopLeftY": 1457,
+                                    "BottomRightX": 867,
+                                    "BottomRightY": 1497
+                                }
+                            }
+                        },
+                        {
+                            "Text": "你好",
+                            "Start": 2.64,
+                            "End": 3.28,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 447,
+                                    "TopLeftY": 1245,
+                                    "BottomRightX": 634,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "6040",
+                            "Start": 5.32,
+                            "End": 5.36,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 517,
+                                    "TopLeftY": 1673,
+                                    "BottomRightX": 676,
+                                    "BottomRightY": 1761
+                                }
+                            }
+                        },
+                        {
+                            "Text": "你好",
+                            "Start": 6.56,
+                            "End": 7.64,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 447,
+                                    "TopLeftY": 1245,
+                                    "BottomRightX": 634,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "0",
+                            "Start": 7.88,
+                            "End": 7.88,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 791,
+                                    "TopLeftY": 1439,
+                                    "BottomRightX": 884,
+                                    "BottomRightY": 1472
+                                }
+                            }
+                        },
+                        {
+                            "Text": "人",
+                            "Start": 8.2,
+                            "End": 8.2,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 797,
+                                    "TopLeftY": 1433,
+                                    "BottomRightX": 884,
+                                    "BottomRightY": 1466
+                                }
+                            }
+                        },
+                        {
+                            "Text": "人",
+                            "Start": 8.8,
+                            "End": 9.24,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 778,
+                                    "TopLeftY": 1428,
+                                    "BottomRightX": 886,
+                                    "BottomRightY": 1473
+                                }
+                            }
+                        },
+                        {
+                            "Text": "人人",
+                            "Start": 9.28,
+                            "End": 9.28,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 785,
+                                    "TopLeftY": 1439,
+                                    "BottomRightX": 884,
+                                    "BottomRightY": 1472
+                                }
+                            }
+                        },
+                        {
+                            "Text": "人",
+                            "Start": 9.48,
+                            "End": 9.76,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 789,
+                                    "TopLeftY": 1439,
+                                    "BottomRightX": 888,
+                                    "BottomRightY": 1493
+                                }
+                            }
+                        },
+                        {
+                            "Text": "0人",
+                            "Start": 10.64,
+                            "End": 10.64,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 749,
+                                    "TopLeftY": 1433,
+                                    "BottomRightX": 861,
+                                    "BottomRightY": 1473
+                                }
+                            }
+                        },
+                        {
+                            "Text": "城市人",
+                            "Start": 10.68,
+                            "End": 11.96,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 737,
+                                    "TopLeftY": 1421,
+                                    "BottomRightX": 873,
+                                    "BottomRightY": 1467
+                                }
+                            }
+                        },
+                        {
+                            "Text": "江城市人民",
+                            "Start": 11.04,
+                            "End": 11.04,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 737,
+                                    "TopLeftY": 1439,
+                                    "BottomRightX": 867,
+                                    "BottomRightY": 1479
+                                }
+                            }
+                        },
+                        {
+                            "Text": "江湖市人解喜",
+                            "Start": 12.32,
+                            "End": 12.36,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 713,
+                                    "TopLeftY": 1403,
+                                    "BottomRightX": 843,
+                                    "BottomRightY": 1443
+                                }
+                            }
+                        },
+                        {
+                            "Text": "病人还有术后检查",
+                            "Start": 12.56,
+                            "End": 13.48,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 207,
+                                    "TopLeftY": 1239,
+                                    "BottomRightX": 874,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "护士",
+                            "Start": 12.88,
+                            "End": 12.92,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 838,
+                                    "TopLeftY": 70,
+                                    "BottomRightX": 1083,
+                                    "BottomRightY": 135
+                                }
+                            }
+                        },
+                        {
+                            "Text": "护士",
+                            "Start": 13.16,
+                            "End": 13.6,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 842,
+                                    "TopLeftY": 61,
+                                    "BottomRightX": 1072,
+                                    "BottomRightY": 146
+                                }
+                            }
+                        },
+                        {
+                            "Text": "需要做",
+                            "Start": 13.52,
+                            "End": 14.2,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 411,
+                                    "TopLeftY": 1245,
+                                    "BottomRightX": 676,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "护士",
+                            "Start": 13.84,
+                            "End": 13.84,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 850,
+                                    "TopLeftY": 64,
+                                    "BottomRightX": 1065,
+                                    "BottomRightY": 135
+                                }
+                            }
+                        },
+                        {
+                            "Text": "我先过去了",
+                            "Start": 14.56,
+                            "End": 15.52,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 333,
+                                    "TopLeftY": 1239,
+                                    "BottomRightX": 748,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "护士",
+                            "Start": 15.96,
+                            "End": 16.12,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 946,
+                                    "TopLeftY": 52,
+                                    "BottomRightX": 1071,
+                                    "BottomRightY": 123
+                                }
+                            }
+                        },
+                        {
+                            "Text": "护士",
+                            "Start": 16.4,
+                            "End": 16.44,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 946,
+                                    "TopLeftY": 46,
+                                    "BottomRightX": 1071,
+                                    "BottomRightY": 117
+                                }
+                            }
+                        },
+                        {
+                            "Text": "你们聊",
+                            "Start": 16.4,
+                            "End": 17.16,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 411,
+                                    "TopLeftY": 1245,
+                                    "BottomRightX": 676,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "护士",
+                            "Start": 16.68,
+                            "End": 17.04,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 928,
+                                    "TopLeftY": 34,
+                                    "BottomRightX": 1077,
+                                    "BottomRightY": 105
+                                }
+                            }
+                        },
+                        {
+                            "Text": "嗯好",
+                            "Start": 17.4,
+                            "End": 18.04,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 447,
+                                    "TopLeftY": 1245,
+                                    "BottomRightX": 634,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "辛苦了",
+                            "Start": 18.08,
+                            "End": 18.72,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 411,
+                                    "TopLeftY": 1245,
+                                    "BottomRightX": 670,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "钟医生再见",
+                            "Start": 18.76,
+                            "End": 19.56,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 327,
+                                    "TopLeftY": 1245,
+                                    "BottomRightX": 754,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "老板",
+                            "Start": 23.76,
+                            "End": 24.2,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 453,
+                                    "TopLeftY": 1239,
+                                    "BottomRightX": 634,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "我跟你说",
+                            "Start": 24.32,
+                            "End": 25,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 369,
+                                    "TopLeftY": 1245,
+                                    "BottomRightX": 712,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "这个钟医生人超好的",
+                            "Start": 25.28,
+                            "End": 27.16,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 165,
+                                    "TopLeftY": 1245,
+                                    "BottomRightX": 916,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "不仅医术好",
+                            "Start": 27.36,
+                            "End": 28.28,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 327,
+                                    "TopLeftY": 1245,
+                                    "BottomRightX": 754,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "医德也高",
+                            "Start": 28.4,
+                            "End": 29.28,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 370,
+                                    "TopLeftY": 1246,
+                                    "BottomRightX": 712,
+                                    "BottomRightY": 1342
+                                }
+                            }
+                        },
+                        {
+                            "Text": "这次奶奶多亏了他",
+                            "Start": 29.52,
+                            "End": 30.72,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 207,
+                                    "TopLeftY": 1245,
+                                    "BottomRightX": 874,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "我要给他订个锦旗",
+                            "Start": 31.8,
+                            "End": 33.16,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 207,
+                                    "TopLeftY": 1239,
+                                    "BottomRightX": 874,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "林嘉安",
+                            "Start": 33.8,
+                            "End": 34.6,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 405,
+                                    "TopLeftY": 1245,
+                                    "BottomRightX": 670,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "我的耐心是有限度的",
+                            "Start": 34.8,
+                            "End": 36.24,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 171,
+                                    "TopLeftY": 1245,
+                                    "BottomRightX": 910,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "说够了没",
+                            "Start": 38.08,
+                            "End": 39.16,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 375,
+                                    "TopLeftY": 1245,
+                                    "BottomRightX": 712,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "1",
+                            "Start": 42.28,
+                            "End": 42.28,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 0,
+                                    "TopLeftY": 365,
+                                    "BottomRightX": 75,
+                                    "BottomRightY": 417
+                                }
+                            }
+                        },
+                        {
+                            "Text": "1",
+                            "Start": 42.64,
+                            "End": 42.64,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 641,
+                                    "TopLeftY": 221,
+                                    "BottomRightX": 729,
+                                    "BottomRightY": 273
+                                }
+                            }
+                        },
+                        {
+                            "Text": "林嘉安",
+                            "Start": 44.44,
+                            "End": 45.08,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 405,
+                                    "TopLeftY": 1239,
+                                    "BottomRightX": 670,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "你是不是忘了什么事",
+                            "Start": 45.44,
+                            "End": 46.6,
+                            "DetailedInfo": {
+                                "Label": "Subtitle",
+                                "PixelRectangle": {
+                                    "TopLeftX": 171,
+                                    "TopLeftY": 1239,
+                                    "BottomRightX": 916,
+                                    "BottomRightY": 1348
+                                }
+                            }
+                        },
+                        {
+                            "Text": "未",
+                            "Start": 47.48,
+                            "End": 50.12,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 584,
+                                    "TopLeftY": 1046,
+                                    "BottomRightX": 991,
+                                    "BottomRightY": 1563
+                                }
+                            }
+                        },
+                        {
+                            "Text": "续",
+                            "Start": 47.64,
+                            "End": 50.12,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 631,
+                                    "TopLeftY": 1382,
+                                    "BottomRightX": 996,
+                                    "BottomRightY": 1812
+                                }
+                            }
+                        },
+                        {
+                            "Text": "未完续",
+                            "Start": 47.72,
+                            "End": 47.8,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 592,
+                                    "TopLeftY": 1054,
+                                    "BottomRightX": 1038,
+                                    "BottomRightY": 1859
+                                }
+                            }
+                        },
+                        {
+                            "Text": "完",
+                            "Start": 48.24,
+                            "End": 50.12,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 750,
+                                    "TopLeftY": 1268,
+                                    "BottomRightX": 943,
+                                    "BottomRightY": 1469
+                                }
+                            }
+                        },
+                        {
+                            "Text": "待",
+                            "Start": 48.36,
+                            "End": 50.12,
+                            "DetailedInfo": {
+                                "Label": "Others",
+                                "PixelRectangle": {
+                                    "TopLeftX": 636,
+                                    "TopLeftY": 1400,
+                                    "BottomRightX": 852,
+                                    "BottomRightY": 1613
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            "Type": "Task"
+        },
+        "RunId": "qb:23500be7f9c06c1630f7153ddcaf6759",
+        "SpaceName": "space-voice-extreme",
+        "Status": "Success"
+    }
+}

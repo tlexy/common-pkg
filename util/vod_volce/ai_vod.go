@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 
 	"github.com/tlexy/common-pkg/util/volce_base"
@@ -48,7 +47,7 @@ import (
 // 	return nil
 // }
 
-func (v *VodVolce) SubmitOcrTask(vid, spaceName string) error {
+func (v *VodVolce) SubmitOcrTask(vid, spaceName string) (string, error) {
 	vodv2Session := volce_base.NewVodV2Session(v.accessKey, v.secretKey)
 
 	startExecInput := &volce_base.StartExecutionInput{
@@ -71,17 +70,17 @@ func (v *VodVolce) SubmitOcrTask(vid, spaceName string) error {
 
 	body, err := json.Marshal(startExecInput)
 	if err != nil {
-		return err
+		return "", fmt.Errorf("marshal start exec input err: %w", err)
 	}
 
-	req, err := vodv2Session.ConstructHttpRequest(body)
+	req, err := vodv2Session.StartExecutionRequest(body)
 	if err != nil {
-		return err
+		return "", fmt.Errorf("start execution request err: %w", err)
 	}
 
 	response, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("do request err: %w", err)
+		return "", fmt.Errorf("do request err: %w", err)
 	}
 
 	// 5. 打印响应
@@ -92,16 +91,52 @@ func (v *VodVolce) SubmitOcrTask(vid, spaceName string) error {
 
 	// log.Printf("response:\n%s\n", string(responseRaw))
 
-	if response.StatusCode == 200 {
-		log.Printf("请求成功")
-	} else {
-		log.Printf("请求失败")
-		responseBody, err := io.ReadAll(response.Body)
-		if err != nil {
-			return fmt.Errorf("read response body err: %w", err)
-		}
-		log.Printf("Response Body: %s", string(responseBody))
-		return fmt.Errorf("request failed, status: %s, response body: %s", response.Status, string(responseBody))
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return "", fmt.Errorf("read response body err: %w", err)
 	}
-	return nil
+	//log.Printf("Response Body: %s", string(responseBody))
+	if response.StatusCode != 200 {
+		//log.Printf("请求失败")
+		return "", fmt.Errorf("request failed, status code: %d, body: %s", response.StatusCode, string(responseBody))
+	}
+	//log.Printf("请求成功")
+	// 解析 JSON 响应
+	var startExecOutput volce_base.StartExecutionOutput
+	err = json.Unmarshal(responseBody, &startExecOutput)
+	if err != nil {
+		return "", fmt.Errorf("unmarshal response body err: %w", err)
+	}
+
+	return startExecOutput.Result.RunId, nil
+}
+
+func (v *VodVolce) QueryOcrTaskResult(runId string) (*volce_base.ExcutionOcrResult, error) {
+	vodv2Session := volce_base.NewVodV2Session(v.accessKey, v.secretKey)
+
+	req, err := vodv2Session.GetExecutionRequest(runId)
+	if err != nil {
+		return nil, fmt.Errorf("get execution request err: %w", err)
+	}
+
+	response, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("do request err: %w", err)
+	}
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, fmt.Errorf("read response body err: %w", err)
+	}
+	//log.Printf("Response Body: %s", string(responseBody))
+	if response.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed, status code: %d, body: %s", response.StatusCode, string(responseBody))
+	}
+
+	var execOutput volce_base.ExcutionOcrResult
+	err = json.Unmarshal(responseBody, &execOutput)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshal response body err: %w", err)
+	}
+	return &execOutput, nil
 }
