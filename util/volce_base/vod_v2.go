@@ -5,7 +5,9 @@ import (
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -66,11 +68,54 @@ func getSignedKey(secretKey, date, region, service string) []byte {
 	return kSigning
 }
 
+func (v *VodV2Session) StartExecution(req interface{}) ([]byte, int, error) {
+	body, err := json.Marshal(req)
+	if err != nil {
+		return nil, 0, fmt.Errorf("marshal start exec input err: %w", err)
+	}
+
+	httpReq, err := v.StartExecutionRequest(body)
+	if err != nil {
+		return nil, 0, fmt.Errorf("start execution request err: %w", err)
+	}
+
+	response, err := http.DefaultClient.Do(httpReq)
+	if err != nil {
+		return nil, 0, fmt.Errorf("do request err: %w", err)
+	}
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, 0, fmt.Errorf("read response body err: %w", err)
+	}
+
+	return responseBody, response.StatusCode, nil
+}
+
 func (v *VodV2Session) StartExecutionRequest(body []byte) (*http.Request, error) {
 	queries := make(url.Values)
 	queries.Set("Action", v.startAction)
 	queries.Set("Version", v.version)
 	return v.doHttpRequest(body, queries)
+}
+
+func (v *VodV2Session) GetExecutionResult(runId string) ([]byte, int, error) {
+	req, err := v.GetExecutionRequest(runId)
+	if err != nil {
+		return nil, 0, fmt.Errorf("get execution request err: %w", err)
+	}
+
+	response, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, 0, fmt.Errorf("do request err: %w", err)
+	}
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, 0, fmt.Errorf("read response body err: %w", err)
+	}
+	log.Printf("Response Body: %s", string(responseBody))
+	return responseBody, response.StatusCode, nil
 }
 
 func (v *VodV2Session) GetExecutionRequest(runId string) (*http.Request, error) {

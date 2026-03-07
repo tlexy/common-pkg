@@ -193,3 +193,60 @@ func (v *VodVolce) QueryEraseTaskResult(runId string) (*volce_base.ExecutionEras
 	}
 	return &execOutput, nil
 }
+
+func (v *VodVolce) SubmitAudioExtractTask(vid, spaceName string) (string, error) {
+	vodv2Session := volce_base.NewVodV2Session(v.accessKey, v.secretKey)
+
+	startExecInput := &volce_base.StartExecutionInput{
+		Input: &volce_base.InputForStartExecutionInput{
+			Type: "Vid",
+			Vid:  vid,
+		},
+		Operation: &volce_base.ConvertOperationForStartExecutionInput{
+			Type: "Task",
+			Task: &volce_base.Task{
+				Type: "AudioExtract",
+				AudioExtract: &volce_base.OperationTaskAudioExtract{
+					Voice: true,
+				},
+			},
+		},
+		SpaceName: spaceName,
+	}
+
+	body, statusCode, err := vodv2Session.StartExecution(startExecInput)
+	if err != nil {
+		return "", fmt.Errorf("start execution err: %w", err)
+	}
+	log.Printf("StartExecution status code: %d", statusCode)
+	if statusCode != 200 {
+		return "", fmt.Errorf("request failed, status code: %d, body: %s", statusCode, string(body))
+	}
+
+	var startExecOutput volce_base.StartExecutionOutput
+	err = json.Unmarshal(body, &startExecOutput)
+	if err != nil {
+		return "", fmt.Errorf("unmarshal response body err: %w", err)
+	}
+	return startExecOutput.Result.RunId, nil
+}
+
+func (v *VodVolce) QueryAudioExtractTaskResult(runId string) (*volce_base.ExecutionAudioExtractResult, error) {
+	vodv2Session := volce_base.NewVodV2Session(v.accessKey, v.secretKey)
+
+	body, statusCode, err := vodv2Session.GetExecutionResult(runId)
+	if err != nil {
+		return nil, fmt.Errorf("get execution result err: %w", err)
+	}
+	log.Printf("GetExecutionResult status code: %d", statusCode)
+	if statusCode != 200 {
+		return nil, fmt.Errorf("request failed, status code: %d, body: %s", statusCode, string(body))
+	}
+
+	var execOutput volce_base.ExecutionAudioExtractResult
+	err = json.Unmarshal(body, &execOutput)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshal response body err: %w", err)
+	}
+	return &execOutput, nil
+}

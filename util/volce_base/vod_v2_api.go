@@ -89,7 +89,7 @@ type Task struct {
 	Highlight    *HighLight                 `json:"Highlight,omitempty"`
 	AudioExtract *OperationTaskAudioExtract `json:"AudioExtract,omitempty"` // 人声分离
 	Asr          *OperationTaskAsr          `json:"Asr,omitempty"`          // 语音识别
-	Ocr          *OperationTaskOcr          `json:"Ocr,omitempty"`          // 文字识别
+	Ocr          *OperationTaskOcr          `json:"Ocr,omitempty"`          // 视频字幕识别
 	Erase        *OperationTaskErase        `json:"Erase,omitempty"`        // 视频擦除
 }
 
@@ -180,7 +180,7 @@ type ExecutionEraseResult struct {
 				Erase struct {
 					Duration float64 `json:"Duration,omitempty"`
 					File     struct {
-						Size     int64  `json:"Size,omitempty"`
+						Size     string `json:"Size,omitempty"`
 						FileName string `json:"FileName,omitempty"`
 						Vid      string `json:"Vid,omitempty"`
 					} `json:"File,omitempty"`
@@ -193,6 +193,42 @@ type ExecutionEraseResult struct {
 						} `json:"Areas,omitempty"`
 					} `json:"Info,omitempty"`
 				} `json:"Erase,omitempty"`
+			} `json:"Task,omitempty"`
+		} `json:"Output,omitempty"`
+	} `json:"Result,omitempty"`
+}
+
+type ExecutionAudioExtractResult struct {
+	ResponseMetadata ResponseMetadata `json:"ResponseMetadata,omitempty"`
+	Result           struct {
+		Status string                       `json:"Status,omitempty"`
+		RunId  string                       `json:"RunId,omitempty"`
+		Input  *InputForStartExecutionInput `json:"Input,omitempty"`
+		Meta   struct {
+			CreateTime string `json:"CreateTime,omitempty"`
+			EndTime    string `json:"EndTime,omitempty"`
+			SpaceName  string `json:"SpaceName,omitempty"`
+			StartTime  string `json:"StartTime,omitempty"`
+			Trigger    string `json:"Trigger,omitempty"`
+		} `json:"Meta,omitempty"`
+		Operation *ConvertOperationForStartExecutionInput `json:"Operation,omitempty"`
+		Output    struct {
+			Type string `json:"Type,omitempty"`
+			Task struct {
+				Type         string `json:"Type,omitempty"`
+				AudioExtract struct {
+					File struct {
+						Duration float32 `json:"Duration,omitempty"`
+						Voice    struct {
+							Size     string `json:"Size,omitempty"`
+							FileName string `json:"FileName,omitempty"`
+						} `json:"Voice,omitempty"`
+						Background struct {
+							Size     string `json:"Size,omitempty"`
+							FileName string `json:"FileName,omitempty"`
+						} `json:"Background,omitempty"`
+					} `json:"File,omitempty"`
+				} `json:"AudioExtract,omitempty"`
 			} `json:"Task,omitempty"`
 		} `json:"Output,omitempty"`
 	} `json:"Result,omitempty"`
