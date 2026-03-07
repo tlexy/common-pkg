@@ -217,19 +217,48 @@ type ExecutionAudioExtractResult struct {
 			Task struct {
 				Type         string `json:"Type,omitempty"`
 				AudioExtract struct {
-					File struct {
-						Duration float32 `json:"Duration,omitempty"`
-						Voice    struct {
-							Size     string `json:"Size,omitempty"`
-							FileName string `json:"FileName,omitempty"`
-						} `json:"Voice,omitempty"`
-						Background struct {
-							Size     string `json:"Size,omitempty"`
-							FileName string `json:"FileName,omitempty"`
-						} `json:"Background,omitempty"`
-					} `json:"File,omitempty"`
+					Duration float32 `json:"Duration,omitempty"`
+					Voice    struct {
+						Size     string `json:"Size,omitempty"`
+						FileName string `json:"FileName,omitempty"`
+					} `json:"Voice,omitempty"`
+					Background struct {
+						Size     string `json:"Size,omitempty"`
+						FileName string `json:"FileName,omitempty"`
+					} `json:"Background,omitempty"`
 				} `json:"AudioExtract,omitempty"`
 			} `json:"Task,omitempty"`
+		} `json:"Output,omitempty"`
+	} `json:"Result,omitempty"`
+}
+
+type ExecutionAsrResult struct {
+	ResponseMetadata ResponseMetadata `json:"ResponseMetadata,omitempty"`
+	Result           struct {
+		Status string                       `json:"Status,omitempty"`
+		RunId  string                       `json:"RunId,omitempty"`
+		Input  *InputForStartExecutionInput `json:"Input,omitempty"`
+		Meta   struct {
+			CreateTime string `json:"CreateTime,omitempty"`
+			EndTime    string `json:"EndTime,omitempty"`
+			SpaceName  string `json:"SpaceName,omitempty"`
+			StartTime  string `json:"StartTime,omitempty"`
+			Trigger    string `json:"Trigger,omitempty"`
+		} `json:"Meta,omitempty"`
+		Operation *ConvertOperationForStartExecutionInput `json:"Operation,omitempty"`
+		Output    struct {
+			Duration   float64 `json:"Duration,omitempty"`
+			Confidence float64 `json:"Confidence,omitempty"`
+			Utterances []struct {
+				Text      string  `json:"Text,omitempty"`
+				Start     float64 `json:"Start,omitempty"`
+				End       float64 `json:"End,omitempty"`
+				Attribute struct {
+					Speaker    string  `json:"Speaker,omitempty"`
+					Confidence float64 `json:"Confidence,omitempty"`
+					Event      string  `json:"Event,omitempty"` // 识别类型，取值如下：speech: 对话 singing: 歌唱
+				} `json:"Attribute,omitempty"`
+			} `json:"Utterances,omitempty"`
 		} `json:"Output,omitempty"`
 	} `json:"Result,omitempty"`
 }
