@@ -4,48 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"github.com/tlexy/common-pkg/util/volce_base"
 )
 
 // https://www.volcengine.com/docs/4/1923688?lang=zh
-// func (v *VodVolce) SubmitOcrTask(vid string) error {
-// 	region := "cn-north-1"
-// 	config := volcengine.NewConfig().
-// 		WithCredentials(credentials.NewStaticCredentials(v.accessKey, v.secretKey, "")).
-// 		WithRegion(region)
-
-// 	sess, err := session.NewSession(config)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	client := vod20250101.New(sess)
-
-// 	resp, err := client.StartExecution(&vod20250101.StartExecutionInput{
-// 		Input: &vod20250101.InputForStartExecutionInput{
-// 			Type: volcengine.String("Vid"),
-// 			Vid:  volcengine.String(vid),
-// 		},
-// 		Operation: &vod20250101.ConvertOperationForStartExecutionInput{
-// 			Type: volcengine.String("Task"),
-// 			Task: &vod20250101.TaskForStartExecutionInput{
-// 				Type:      volcengine.String("Highlight"),
-// 				Highlight: &vod20250101.HighlightForStartExecutionInput{},
-// 			},
-// 		},
-// 		Control: &vod20250101.ControlForStartExecutionInput{
-// 			ClientToken: volcengine.String("testToken"),
-// 		},
-// 	})
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	fmt.Println(resp)
-// 	return nil
-// }
 
 func (v *VodVolce) SubmitOcrTask(vid, spaceName string) (string, error) {
 	vodv2Session := volce_base.NewVodV2Session(v.accessKey, v.secretKey)
@@ -111,7 +76,7 @@ func (v *VodVolce) SubmitOcrTask(vid, spaceName string) (string, error) {
 	return startExecOutput.Result.RunId, nil
 }
 
-func (v *VodVolce) QueryOcrTaskResult(runId string) (*volce_base.ExcutionOcrResult, error) {
+func (v *VodVolce) QueryOcrTaskResult(runId string) (*volce_base.ExecutionOcrResult, error) {
 	vodv2Session := volce_base.NewVodV2Session(v.accessKey, v.secretKey)
 
 	req, err := vodv2Session.GetExecutionRequest(runId)
@@ -133,7 +98,95 @@ func (v *VodVolce) QueryOcrTaskResult(runId string) (*volce_base.ExcutionOcrResu
 		return nil, fmt.Errorf("request failed, status code: %d, body: %s", response.StatusCode, string(responseBody))
 	}
 
-	var execOutput volce_base.ExcutionOcrResult
+	var execOutput volce_base.ExecutionOcrResult
+	err = json.Unmarshal(responseBody, &execOutput)
+	if err != nil {
+		return nil, fmt.Errorf("unmarshal response body err: %w", err)
+	}
+	return &execOutput, nil
+}
+
+func (v *VodVolce) SubmitEraseTask(vid, spaceName string) (string, error) {
+	vodv2Session := volce_base.NewVodV2Session(v.accessKey, v.secretKey)
+
+	startExecInput := &volce_base.StartExecutionInput{
+		Input: &volce_base.InputForStartExecutionInput{
+			Type: "Vid",
+			Vid:  vid,
+		},
+		Operation: &volce_base.ConvertOperationForStartExecutionInput{
+			Type: "Task",
+			Task: &volce_base.Task{
+				Type: "Erase",
+				Erase: &volce_base.OperationTaskErase{
+					Mode: "Auto",
+					Auto: &volce_base.EraseAuto{
+						Type: "Subtitle",
+					},
+					NewVid:        true,
+					WithEraseInfo: true,
+				},
+			},
+		},
+		SpaceName: spaceName,
+	}
+
+	body, err := json.Marshal(startExecInput)
+	if err != nil {
+		return "", fmt.Errorf("marshal start exec input err: %w", err)
+	}
+
+	req, err := vodv2Session.StartExecutionRequest(body)
+	if err != nil {
+		return "", fmt.Errorf("start execution request err: %w", err)
+	}
+
+	response, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("do request err: %w", err)
+	}
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return "", fmt.Errorf("read response body err: %w", err)
+	}
+
+	if response.StatusCode != 200 {
+		return "", fmt.Errorf("request failed, status code: %d, body: %s", response.StatusCode, string(responseBody))
+	}
+
+	var startExecOutput volce_base.StartExecutionOutput
+	err = json.Unmarshal(responseBody, &startExecOutput)
+	if err != nil {
+		return "", fmt.Errorf("unmarshal response body err: %w", err)
+	}
+
+	return startExecOutput.Result.RunId, nil
+}
+
+func (v *VodVolce) QueryEraseTaskResult(runId string) (*volce_base.ExecutionEraseResult, error) {
+	vodv2Session := volce_base.NewVodV2Session(v.accessKey, v.secretKey)
+
+	req, err := vodv2Session.GetExecutionRequest(runId)
+	if err != nil {
+		return nil, fmt.Errorf("get execution request err: %w", err)
+	}
+
+	response, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("do request err: %w", err)
+	}
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, fmt.Errorf("read response body err: %w", err)
+	}
+	log.Printf("Response Body: %s", string(responseBody))
+	if response.StatusCode != 200 {
+		return nil, fmt.Errorf("request failed, status code: %d, body: %s", response.StatusCode, string(responseBody))
+	}
+
+	var execOutput volce_base.ExecutionEraseResult
 	err = json.Unmarshal(responseBody, &execOutput)
 	if err != nil {
 		return nil, fmt.Errorf("unmarshal response body err: %w", err)

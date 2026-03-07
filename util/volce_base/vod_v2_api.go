@@ -50,20 +50,25 @@ type OperationTaskOcr struct {
 	Mode         string `json:"Mode,omitempty"`         // Subtitle：默认模式。Detailed：会在任务结果中输出 OCR 识别的文本类型和位置信息。
 }
 
+type EraseAuto struct {
+	Type           string `json:"Type,omitempty"` //Subtitle: 擦除 OCR 检测为字幕的文本;Text: (Beta) 擦除除场景文字（如宫殿门牌匾等）以外的字幕及其他文本（如人物介绍等）。
+	SubtitleFilter struct {
+	} `json:"SubtitleFilter"`
+	Locations []struct {
+		RatioLocation struct {
+			TopLeftX     float64 `json:"TopLeftX,omitempty"`     // 框选区域左上角相对于视频左上角在X轴上的偏移比例，取值范围为[0,1]，其中 0 表示无偏移（与视频左边缘对齐），1 表示完全偏移（与视频右边缘对齐）。
+			TopLeftY     float64 `json:"TopLeftY,omitempty"`     // 框选区域左上角相对于视频左上角在 Y 轴上的偏移比例，取值范围为 [0,1]，其中 0 表示无偏移（与视频上边缘对齐），1 表示完全偏移（与视频下边缘对齐）。
+			BottomRightX float64 `json:"BottomRightX,omitempty"` // 框选区域右下角相对于视频左上角在 X 轴上的偏移比例，取值范围为 [0,1]，其中 0 表示无偏移（与视频左边缘对齐），1 表示完全偏移（与视频右边缘对齐）。
+			BottomRightY float64 `json:"BottomRightY,omitempty"` // 框选区域右下角相对于视频左上角在 Y 轴上的偏移比例，取值范围为 [0,1]，其中 0 表示无偏移（与视频上边缘对齐），1 表示完全偏移（与视频下边缘对齐）。
+		} `json:"RatioLocation,omitempty"`
+	} `json:"Locations,omitempty"`
+}
+
 type OperationTaskErase struct {
-	Mode string `json:"Mode,omitempty"` // Auto：自动擦除模式。在此模式下，系统将启用 OCR 识别，并依据检测结果进行擦除操作。Manual：(Beta) 手动擦除模式。在此模式下，系统不会启用 OCR 识别，仅擦除白色字幕内容。
-	Auto struct {
-		Type      string `json:"Type,omitempty"` //Subtitle: 擦除 OCR 检测为字幕的文本;Text: (Beta) 擦除除场景文字（如宫殿门牌匾等）以外的字幕及其他文本（如人物介绍等）。
-		Locations []struct {
-			RatioLocation struct {
-				TopLeftX     float64 `json:"TopLeftX,omitempty"`     // 框选区域左上角相对于视频左上角在X轴上的偏移比例，取值范围为[0,1]，其中 0 表示无偏移（与视频左边缘对齐），1 表示完全偏移（与视频右边缘对齐）。
-				TopLeftY     float64 `json:"TopLeftY,omitempty"`     // 框选区域左上角相对于视频左上角在 Y 轴上的偏移比例，取值范围为 [0,1]，其中 0 表示无偏移（与视频上边缘对齐），1 表示完全偏移（与视频下边缘对齐）。
-				BottomRightX float64 `json:"BottomRightX,omitempty"` // 框选区域右下角相对于视频左上角在 X 轴上的偏移比例，取值范围为 [0,1]，其中 0 表示无偏移（与视频左边缘对齐），1 表示完全偏移（与视频右边缘对齐）。
-				BottomRightY float64 `json:"BottomRightY,omitempty"` // 框选区域右下角相对于视频左上角在 Y 轴上的偏移比例，取值范围为 [0,1]，其中 0 表示无偏移（与视频上边缘对齐），1 表示完全偏移（与视频下边缘对齐）。
-			} `json:"RatioLocation,omitempty"`
-		} `json:"Locations,omitempty"`
-	} `json:"Auto,omitempty"`
-	NewVid bool `json:"NewVid,omitempty"` // 是否创建新 Vid。取值为 true 或 false。
+	Mode          string     `json:"Mode,omitempty"` // Auto：自动擦除模式。在此模式下，系统将启用 OCR 识别，并依据检测结果进行擦除操作。Manual：(Beta) 手动擦除模式。在此模式下，系统不会启用 OCR 识别，仅擦除白色字幕内容。
+	Auto          *EraseAuto `json:"Auto,omitempty"`
+	NewVid        bool       `json:"NewVid,omitempty"`        // 是否创建新 Vid。取值为 true 或 false。
+	WithEraseInfo bool       `json:"WithEraseInfo,omitempty"` // 是否返回擦除信息。取值为 true 或 false。
 }
 
 // https://www.volcengine.com/docs/4/1582324?lang=zh#operationtask
@@ -114,7 +119,7 @@ type StartExecutionOutput struct {
 	} `json:"Result,omitempty"`
 }
 
-type ExcutionOcrResult struct {
+type ExecutionOcrResult struct {
 	ResponseMetadata ResponseMetadata `json:"ResponseMetadata,omitempty"`
 	Result           struct {
 		Status string                       `json:"Status,omitempty"`
@@ -149,6 +154,45 @@ type ExcutionOcrResult struct {
 						} `json:"DetailedInfo,omitempty"`
 					} `json:"Texts,omitempty"`
 				} `json:"Ocr,omitempty"`
+			} `json:"Task,omitempty"`
+		} `json:"Output,omitempty"`
+	} `json:"Result,omitempty"`
+}
+
+type ExecutionEraseResult struct {
+	ResponseMetadata ResponseMetadata `json:"ResponseMetadata,omitempty"`
+	Result           struct {
+		Status string                       `json:"Status,omitempty"`
+		RunId  string                       `json:"RunId,omitempty"`
+		Input  *InputForStartExecutionInput `json:"Input,omitempty"`
+		Meta   struct {
+			CreateTime string `json:"CreateTime,omitempty"`
+			EndTime    string `json:"EndTime,omitempty"`
+			SpaceName  string `json:"SpaceName,omitempty"`
+			StartTime  string `json:"StartTime,omitempty"`
+			Trigger    string `json:"Trigger,omitempty"`
+		} `json:"Meta,omitempty"`
+		Operation *ConvertOperationForStartExecutionInput `json:"Operation,omitempty"`
+		Output    struct {
+			Type string `json:"Type,omitempty"`
+			Task struct {
+				Type  string `json:"Type,omitempty"`
+				Erase struct {
+					Duration float64 `json:"Duration,omitempty"`
+					File     struct {
+						Size     int64  `json:"Size,omitempty"`
+						FileName string `json:"FileName,omitempty"`
+						Vid      string `json:"Vid,omitempty"`
+					} `json:"File,omitempty"`
+					Info struct {
+						Width  int32 `json:"Width,omitempty"`
+						Height int32 `json:"Height,omitempty"`
+						Areas  []struct {
+							Start float64 `json:"Start,omitempty"`
+							End   float64 `json:"End,omitempty"`
+						} `json:"Areas,omitempty"`
+					} `json:"Info,omitempty"`
+				} `json:"Erase,omitempty"`
 			} `json:"Task,omitempty"`
 		} `json:"Output,omitempty"`
 	} `json:"Result,omitempty"`

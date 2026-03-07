@@ -41,3 +41,26 @@ func TestVodVolce_QueryOcrTaskResult2(t *testing.T) {
 
 	//log.Printf("ocrRes: %+v\n", ocrRes)
 }
+
+func TestVodVolce_SubmitEraseTask2(t *testing.T) {
+	vod := vod_volce.NewVodVolce("",
+		"",
+		"space-voice-extreme")
+	runId, err := vod.SubmitEraseTask("", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	//"qb:f525d9768cfecaa2fee05e5405a797cf"
+	log.Printf("runId: %v\n", runId)
+}
+
+func TestVodVolce_QueryEraseTask2(t *testing.T) {
+	vod := vod_volce.NewVodVolce("",
+		"",
+		"")
+	eraseRes, err := vod.QueryEraseTaskResult("")
+	if err != nil {
+		t.Fatal(err)
+	}
+	log.Printf("eraseRes: %+v\n", eraseRes)
+}
