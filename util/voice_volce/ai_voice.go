@@ -99,5 +99,6 @@ func (v *AiVoice) SubmitAsrTask(ctx context.Context, req *AsrRequest) (string, e
 }
 
 func (v *AiVoice) GetAsrResult(taskId string) (*AsrResultRes, error) {
+	// https://www.volcengine.com/docs/6561/1354868?lang=zh
 	return nil, nil
 }
