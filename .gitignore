@@ -21,3 +21,5 @@ bin
 util/object_storage_test.go
 util/*_test.go
 util/*.txt
+util/*.exe*
+util/*.exe

@@ -145,11 +145,15 @@ func (v *VodVolce) GetMediaDownloadUrl(vid string) (string, error) {
 		fmt.Printf("GetPlayInfo error %v", err)
 		return "", err
 	}
-
-	fmt.Println(status)
-	fmt.Println(err)
-	fmt.Println(resp.String())
-	return resp.String(), nil
+	if status != 200 {
+		return "", fmt.Errorf("request failed, status code: %d, body: %s", status, resp.String())
+	}
+	// fmt.Println(status)
+	//fmt.Println(err)
+	if resp.GetResult() != nil && len(resp.GetResult().GetPlayInfoList()) > 0 {
+		return resp.GetResult().GetPlayInfoList()[0].MainPlayUrl, nil
+	}
+	return "", fmt.Errorf("get play info error")
 }
 
 func (v *VodVolce) GetMediaInnerDownloadUrl(spaceName, fileName string, expireInSecond int64) (string, error) {
