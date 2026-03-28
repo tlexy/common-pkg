@@ -5,6 +5,11 @@ type AudioFormat string
 const (
 	AudioFormatMp3 AudioFormat = "mp3"
 	AudioFormatWav AudioFormat = "wav"
+
+	AsrStatusSuccess int32 = 200
+	AsrStatusFailed  int32 = 400
+	AsrStatusRunning int32 = 201
+	AsrStatusQueued  int32 = 202
 )
 
 type AsrRequest struct {
@@ -37,5 +42,23 @@ type AsrRequestInternal struct {
 }
 
 type AsrResultRes struct {
-	TaskId string
+	TaskId     string `json:"task_id"`
+	StatusCode int32  `json:"status_code"`
+	Message    string `json:"message"`
+	AudioInfo  struct {
+		Duration float32 `json:"duration"`
+	} `json:"audio_info"`
+	Result struct {
+		Text       string `json:"text"`
+		Utterances []struct {
+			Text      string `json:"text"`
+			StartTime int    `json:"start_time"`
+			EndTime   int    `json:"end_time"`
+			Words     []struct {
+				Text      string `json:"text"`
+				StartTime int    `json:"start_time"`
+				EndTime   int    `json:"end_time"`
+			} `json:"words"`
+		} `json:"utterances"`
+	} `json:"result"`
 }

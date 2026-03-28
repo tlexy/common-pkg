@@ -2,6 +2,7 @@ package voice_volce
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -27,6 +28,7 @@ const (
 	XApiMessage    = "X-Api-Message"
 	XApiStatusCode = "X-Api-Status-Code"
 	submitUrl      = "https://openspeech.bytedance.com/api/v3/auc/bigmodel/submit"
+	queryUrl       = "https://openspeech.bytedance.com/api/v3/auc/bigmodel/query"
 )
 
 type AiVoice struct {
@@ -72,7 +74,7 @@ func (v *AiVoice) SubmitAsrTask(ctx context.Context, req *AsrRequest) (string, e
 	}
 
 	respHeader := make(map[string]string)
-	var response AsrResultRes
+	var response map[string]interface{} = make(map[string]interface{})
 	err := retry.Do(func() error {
 		return v.httpClient.PostJsonWithHeader(ctx, submitUrl, ari, &response, reqHeader, respHeader)
 	},
@@ -98,7 +100,53 @@ func (v *AiVoice) SubmitAsrTask(ctx context.Context, req *AsrRequest) (string, e
 	return req.RequestId, nil
 }
 
-func (v *AiVoice) GetAsrResult(taskId string) (*AsrResultRes, error) {
+func (v *AiVoice) GetAsrResult(ctx context.Context, taskId string) (*AsrResultRes, error) {
 	// https://www.volcengine.com/docs/6561/1354868?lang=zh
-	return nil, nil
+	reqHeader := map[string]string{
+		XApiAppKey:       v.appKey,
+		XApiAccessKey:    v.accessKey,
+		XApiResourceId:   "volc.seedasr.auc",
+		XApiRequestId:    taskId,
+		"X-Api-Sequence": "1",
+	}
+
+	respHeader := make(map[string]string)
+	var response AsrResultRes
+	err := retry.Do(func() error {
+		return v.httpClient.PostJsonWithHeader(ctx, queryUrl, make(map[string]interface{}), &response, reqHeader, respHeader)
+	},
+		retry.Attempts(3),
+		retry.Delay(3*time.Second),
+		retry.MaxDelay(30*time.Second),
+		retry.DelayType(retry.BackOffDelay),
+	)
+	log.Printf("VolcengineAsr submit response header: %+v response %+v\n", respHeader, response)
+	if err != nil {
+		log.Printf("VolcengineAsr task failed: %v\n", err)
+		return nil, err
+	}
+
+	statusCode := respHeader[XApiStatusCode]
+	msg := respHeader[XApiMessage]
+	logId := respHeader[XTtLogid]
+	if statusCode != taskSuccess &&
+		statusCode != taskInProgress &&
+		statusCode != taskQueued {
+		log.Printf("VolcengineAsr query task result failed: taskId:%v code:%s logId:%s, msg:%s, err %v\n",
+			taskId, statusCode, logId, msg, err)
+		return &AsrResultRes{
+			TaskId:     taskId,
+			StatusCode: AsrStatusFailed,
+			Message:    fmt.Sprintf("query asr result failed, code:%s, logId:%s, msg:%s", statusCode, logId, msg),
+		}, nil
+	}
+	if statusCode != taskSuccess {
+		return &AsrResultRes{
+			TaskId:     taskId,
+			StatusCode: AsrStatusRunning,
+			Message:    "task is still running",
+		}, nil
+	}
+
+	return &response, nil
 }
