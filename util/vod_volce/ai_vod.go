@@ -248,6 +248,8 @@ func (v *VodVolce) QueryAudioExtractTaskResult(runId string) (*volce_base.Execut
 	if err != nil {
 		return nil, fmt.Errorf("unmarshal response body err: %w", err)
 	}
+	// https://www.volcengine.com/docs/4/1828816?lang=zh
+	// 拼接示例：假设您的加速域名为 play.example.com，获取到的人声文件 FileName 为 speech.aac，那么拼接后的 URL 为：https://play.example.com/speech.aac
 	return &execOutput, nil
 }
 
